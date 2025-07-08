@@ -30,7 +30,12 @@ class VideoThread(QThread):
         self._running = False
 
     def run(self):
-        cap = cv.VideoCapture(c.videoSource)
+        cap = cv.VideoCapture(c.videoSource, cv.CAP_GSTREAMER)
+        if not cap.isOpened():
+            self.changePixmap.emit(self.laskarisPixmap)
+            self.finished.emit()
+            return
+
         while self._running:
             self.mutex.lock()
             ret, frame = cap.read()
